@@ -15,7 +15,6 @@ import torch.nn as nn
 from rich.progress import track
 
 from mmengine.config import Config, ConfigDict
-from mmengine.config.utils import MODULE2PACKAGE
 from mmengine.dataset import pseudo_collate
 from mmengine.device import get_device
 from mmengine.fileio import (get_file_backend, isdir, join_path,
@@ -25,6 +24,8 @@ from mmengine.registry import FUNCTIONS, MODELS, VISUALIZERS, DefaultScope
 from mmengine.runner.checkpoint import (_load_checkpoint,
                                         _load_checkpoint_to_model)
 from mmengine.structures import InstanceData
+from mmengine.utils import package_utils
+from mmengine.utils.plugin import MODULE2PACKAGE
 from mmengine.visualization import Visualizer
 
 InstanceList = List[InstanceData]
@@ -406,12 +407,12 @@ class BaseInferencer(metaclass=InferencerMeta):
         try:
             module = importlib.import_module(scope)
         except ImportError:
-            if scope not in MODULE2PACKAGE:
+            if scope not in package_utils.OFFICAL_MODULE2PACKAGE:
                 raise KeyError(
                     f'{scope} is not a valid scope. The available scopes '
-                    f'are {MODULE2PACKAGE.keys()}')
+                    f'are {package_utils.OFFICAL_MODULE2PACKAGE.keys()}')
             else:
-                project = MODULE2PACKAGE[scope]
+                project = package_utils.OFFICAL_MODULE2PACKAGE[scope]
                 raise ImportError(
                     f'Cannot import {scope} correctly, please try to install '
                     f'the {project} by "pip install {project}"')
