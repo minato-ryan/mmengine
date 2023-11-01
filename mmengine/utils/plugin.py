@@ -13,11 +13,10 @@ MODULE2PACKAGE = {}
 for key, value in package_utils.OFFICAL_MODULE2PACKAGE.items():
     m = importlib.util.find_spec(key)
     if m is None:
-        print_log(f'can not found package {key}.')
+        print_log(f'can not found package {key}.', level=logging.DEBUG)
         continue
 
-    config_root = os.path.join(
-        os.path.dirname(m.origin), '.mim', level=logging.DEBUG)
+    config_root = os.path.join(os.path.dirname(m.origin), '.mim')
     if os.path.exists(config_root):
         MODULE2PACKAGE[key] = value
     else:
